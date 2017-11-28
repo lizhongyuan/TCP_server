@@ -1,0 +1,14 @@
+{
+  "name": "TeacherZhang node8",
+  "version": "0.0.1",
+  "description": "TeacherZhang node8",
+  "main": "index.js",
+  "author": "fenixlee@163.com",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "koa": "^2.4.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.3.0"
+  }
+}
