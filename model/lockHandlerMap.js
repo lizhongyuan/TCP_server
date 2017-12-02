@@ -7,4 +7,4 @@
 
 let _activeLocks = new Map();
 
-exports.lockHandlerMap = _activeLocks;
+module.exports = _activeLocks;

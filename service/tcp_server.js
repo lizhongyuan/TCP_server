@@ -19,15 +19,21 @@ module.exports.createServer = (redis, db, timeout) => {
         client.on("data", data => {
             //
             let imei = packet.imei;
-            let lockHandler = LockHandler.getLockHandler(imei);
+            let packetHandler = LockHandler.getLockHandler(imei);
 
             client.emit("ack_lock_finish", packetHandler);
         });
 
-        client.once("ack_lock_finish", )
+        client.once("ack_lock_finish", buildLongConnection)
 
-        client.on("ack_lock_finish", )
+        client.on("ack_lock_finish", OnLockData)
     })
+
+
+    function OnLockData(packet) {
+        let imei = packet.imei;
+        let lockHandler = lockHandler.getH
+    }
 }
 
 
