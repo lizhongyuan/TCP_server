@@ -1,7 +1,7 @@
 {
-  "name": "TeacherZhang node8",
+  "name": "general long connection server",
   "version": "0.0.1",
-  "description": "TeacherZhang node8",
+  "description": "general long connection server",
   "main": "index.js",
   "author": "fenixlee@163.com",
   "license": "MIT",
