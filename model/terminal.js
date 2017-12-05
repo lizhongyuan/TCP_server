@@ -5,7 +5,7 @@
 'use strict';
 
 const EventEmitter = require('events');
-const downStreamEmitter = require('./MessageEmitter');
+const downStreamEmitter = require('./messageEmitter');
 const Promise = require("bluebird");
 Promise.config({
     cancellation:true

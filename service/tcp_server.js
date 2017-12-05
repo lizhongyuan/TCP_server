@@ -9,7 +9,7 @@ Promise.config({
 
 const Packet = require("./model/packet");;
 const net = require("net");
-const os = require("./os")
+const os = require("os");
 
 
 module.exports.createServer = (redis, db, timeout) => {
