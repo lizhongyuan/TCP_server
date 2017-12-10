@@ -2,23 +2,31 @@
  * Created by lizhongyuan on 2017/11/29.
  */
 
-const Promise = require("bluebird");
+var Promise = require("bluebird");
 Promise.config({
     cancellation:true
 })
 
-const Packet = require("./model/packet");;
-const net = require("net");
-const os = require("os");
+var Packet = require("./model/packet");
+var net = require("net");
+var os = require("./os")
 
 
-module.exports.createServer = (redis, db, timeout) => {
-    return net.createServer((client) => {
+/*
+ * return a tcp server
+ */ 
+// todo: change to a class
+module.exports.TcpServer = (redis, db, timeout) => {
+
+    let curDeviceID;
+
+    return net.createServer( socket => {
 
         let curImei;
 
         // 服务器收到数据data时的
-        client.on("data", data => {
+        socket.on("data", data => {
+
             //
             let imei = packet.imei;
             let packetHandler = LockHandler.getLockHandler(imei);
@@ -26,13 +34,13 @@ module.exports.createServer = (redis, db, timeout) => {
 
             curImei = packetHandler.imei;
 
-            client.emit("ack_lock_finish", packetHandler);
+            socket.emit("ack_lock_finish", packetHandler);
         });
 
-        client.once("ack_lock_finish", buildLongConnection)
+        socket.once("ack_lock_finish", buildLongConnection)
 
-        client.on("ack_lock_finish", OnLockData)
-    })
+        socket.on("ack_lock_finish", OnLockData)
+    });
 
     // 只进行一次, 建立新的[长连接, 设备(lock), 业务Emitter] <--> imei 映射
     function buildLongConnection(packet) {
@@ -53,14 +61,10 @@ module.exports.createServer = (redis, db, timeout) => {
         let lockHandler = lockHandler.getH
     }
 
-
     function sendMsg2Lock(packet) {
         client.write(packet.toString());
     }
 }
-
-
-
 
 
 
