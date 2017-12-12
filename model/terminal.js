@@ -5,19 +5,22 @@
 'use strict';
 
 const EventEmitter = require('events');
-const downStreamEmitter = require('./messageEmitter');
+const downStreamEmitter = require('./messageEmitter').downStreamEmitter;
 const Promise = require("bluebird");
 Promise.config({
     cancellation:true
 })
 
-let onlineTerminals = require('./lockHandlerMap');
+let onlineTerminalMap = require('./lockHandlerMap');
+/** @type {function(string, *)} */
+let TerMapSet = onlineTerminalMap.set;
+// let onlineTerminalMap = new Map();
 
 
 class Terminal {
 
     /*
-     *
+     * 目前只实现heart, unlock, findme
      */
     constructor(deviceID) {
         this.deviceID = deviceID;
@@ -44,7 +47,6 @@ class Terminal {
      * on http api call
      * wait on upStream, and emit downStream
      */
-    //onApiInvoke(body, timeout = 30) {
     waitOnUpStreamAndEmitDownStream(body, timeout = 30) {
         let taskID = genTaskID();
         let packet = new Packet(this.deviceID, taskID, body);
@@ -118,6 +120,53 @@ class Terminal {
         return [cmd, isSuccess];
     }
 
+
+    static add2OnlineTerminalMap(deviceID) {
+        if (!onlineTerminalMap.has(deviceID)) {
+            let newTerminal = new Terminal(deviceID);
+            onlineTerminalMap.set(deviceID, newTerminal);
+        }
+    }
+
+    static delete(imei) {
+        let bike = _activeLocks.get(imei);
+        if (bike && --bike.rfCounter == 0) {
+            return _activeLocks.delete(imei);
+        } else {
+            return false
+        }
+    }
+
+    static getLockHandler(deviceID) {
+        return onlineTerminalMap.get(deviceID);
+    }
+
+    // todo:
+    /*
+    static get activeTerminals() {
+        return _activeLocks;
+    }
+
+    static getActiveLocks() {
+        return _activeLocks;
+    }
+
+    static get activeIMEI() {
+        let list = new Array();
+        for (var key of _activeLocks.keys()) {
+            list.push(key);
+        }
+        return list;
+    }
+
+    static getActiveDeviceIDs() {
+        let list = new Array();
+        for (var key of onlineTerminalMap.keys()) {
+            list.push(key);
+        }
+        return list;
+    }
+    */
 }
 
 

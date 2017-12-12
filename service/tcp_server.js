@@ -2,21 +2,21 @@
  * Created by lizhongyuan on 2017/11/29.
  */
 
-var Promise = require("bluebird");
+let Promise = require("bluebird");
 Promise.config({
     cancellation:true
 })
 
-var Packet = require("./model/packet");
-var net = require("net");
-var os = require("./os")
+let Packet = require("./model/packet");
+let net = require("net");
+let os = require("./os")
 
 
 /*
  * return a tcp server
  */ 
 // todo: change to a class
-module.exports.TcpServer = (redis, db, timeout) => {
+function TcpServer(redis, db, timeout) {
 
     let curDeviceID;
 
@@ -47,7 +47,7 @@ module.exports.TcpServer = (redis, db, timeout) => {
 
         // 登记设备, 如果有, 则写入_activeLock
         let imei = packet.imei;
-        client.imei = imei;
+        socket.imei = imei;
         LockHandler.add(imei);
 
 
@@ -62,9 +62,9 @@ module.exports.TcpServer = (redis, db, timeout) => {
     }
 
     function sendMsg2Lock(packet) {
-        client.write(packet.toString());
+        socket.write(packet.toString());
     }
 }
 
 
-
+module.exports = TcpServer;

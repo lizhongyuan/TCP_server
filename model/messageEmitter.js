@@ -2,6 +2,6 @@
  * Created by lizhongyuan on 2017/11/30.
  */
 
-const EventEmitter = require('events');
+let EventEmitter = require('events');
 
-module.exports = new EventEmitter();
+module.exports.downStreamEmitter = new EventEmitter();
