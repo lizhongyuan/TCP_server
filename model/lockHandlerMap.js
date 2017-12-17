@@ -3,7 +3,7 @@
  */
 
 
-"use strict"
+"use strict";
 
 let _activeLocks = new Map();
 

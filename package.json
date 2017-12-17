@@ -1,5 +1,5 @@
 {
-  "name": "general long connection server",
+  "name": "general_long_connection",
   "version": "0.0.1",
   "description": "general long connection server",
   "main": "index.js",
@@ -9,6 +9,7 @@
     "bluebird": "^3.5.1",
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
-    "koa-router": "^7.3.0"
+    "koa-router": "^7.3.0",
+    "sprintf-js": "^1.1.1"
   }
 }

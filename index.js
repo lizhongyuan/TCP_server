@@ -1,14 +1,19 @@
 "use strict"
 
-var Koa = require('koa');
-var app = new Koa();
-var bodyParser = require('koa-bodyparser');
-var config = require('config');
+let Koa = require('koa');
+let app = new Koa();
+let bodyParser = require('koa-bodyparser');
+let config = require('config');
 
-var router = require('./router');
-var service = require('./service');
-var TcpServer = service.TcpServer;
-var svrRedis = service.svrRedis;
+let router = require('./router');
+let service = require('./service');
+let TcpServer = service.TcpServer;
+let svrRedis = service.svrRedis;
+
+
+// todo
+let db = null;
+let redis = null;
 
 app.use(bodyParser());
 
@@ -17,7 +22,7 @@ app.use(bodyParser());
 app.listen(3000);
 
 setTimeout(() => {
-    let tcpServer = TcpServer.createServer(null, null, 10);
+    let tcpServer = TcpServer(redis, db, 10);
     tcpServer.listen(9603);
 
     console.log("Server start.");

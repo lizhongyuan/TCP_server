@@ -2,115 +2,55 @@
  * Created by lizhongyuan on 17/3/11.
  */
 
-'use strict'
+'use strict';
 
-const sprintf = require('sprintf-js').sprintf
+let sprintf = require('sprintf-js').sprintf;
+let Promise = require('bluebird');
+Promise.config({
+    cancellation:true
+});
 
-/*
- * base class
- */
-class Transponder {
-    constructor(commandCode) {
-        this.commandCode = commandCode;
+
+class Packet {
+
+    constructor (deviceID, msgID, data) {
+        this._deviceID = deviceID;
+        this._msgID = msgID;
+        this._data = data;
+        // todo: you can design your own dispatcher
+        this._dispatcher = /^(\w+)(?::([a-zA-Z0-9,+]+))?/
+        let dataRe = this._dispatcher.exec(this._data);
+        this._action = dataRe[1];
     }
 
-    buildAckData() {
-        return Promise.resolve(`ACK^${this.commandCode}`);
-    }
-}
-
-var locaTransponder = new Transponder('LOCA'); /* ACK^LOCA */
-
-class SYNCTransponder extends Transponder {
-    constructor(commandCode) {
-        super(commandCode);
+    static proID() {
+        return 'demo';
     }
 
-    //ack(para) /* 0 - fff */ {
-    buildAckData(para) /* 0 - fff */ {
-        let now = new Date();
-        let utcStr = sprintf(
-            '%02d%02d%02d%02d%02d%02d',
-            now.getUTCFullYear() % 100,
-            now.getUTCMonth() + 1,
-            now.getUTCDate(),
-            now.getUTCHours(),
-            now.getUTCMinutes(),
-            now.getUTCSeconds()
-        );
+    static terminator() {
+        return '$';
+    }
 
-        if (parseInt(para) == 0) {
-            return new Promise( (resolve, reject) => {
-                super.buildAckData()
-                    .then( (value) => {
-                        resolve([value, utcStr].join(','));
-                    })
-                    .catch( (error) => {})
-            })
+    static genPacketByRawMsg(rawMsg) {
+        // re[4]是re[5]的length
+        let validator = /^(\w{4})#(\d{15})#(\w{4})#(\w{4})#([A-Za-z0-9:;,.+-]+)[$]$/;
+        let re = validator.exec(rawMsg);
+        if (re == null) {
+            return undefined;
         }
-    else return super.buildAckData();
+        let proID = re[1];
+        let deviceID = re[2];
+        let msgID = parseInt(re[3],16);
+        let dataLen = parseInt(re[4], 16);
+        let data = re[5];
+        if (proID != Packet.proID()) {
+            return undefined;
+        }
+        if (dataLen != data.length) {
+            return undefined;
+        }
+
+        return new Packet(deviceID, msgID, data);
     }
 }
-var syncTransponder = new SYNCTransponder('SYNC'); /* ACK^SYNC[,UTC] */
-
-
-class AIRTransponder extends Transponder {
-    constructor(commandCode) {
-        super(commandCode);
-    }
-    buildAckData() {
-        Promise.resolve();
-    }
-}
-/* AIR 包不需要回复 */
-
-class SUDOTransponder extends Transponder {
-    constructor(commandCode) {
-        super(commandCode);
-    }
-
-    buildAckData(para) /* center number */ {
-        return new Promise( (resolve, reject) => {
-                super.buildAckData().then( (value) => {
-                resolve([value, 1].join(','));
-    }).catch( (error) => {
-        });
-    });
-    }
-}
-
-var sudoTransponder = new SUDOTransponder('SUDO'); /* ACK^SUDO,1 */
-
-var lockTransponder = new Transponder('LOCK'); /* ACK^LOCK */
-
-class BTSSIDTransponder extends Transponder {
-    constructor(commandCode) {
-        super(commandCode);
-    }
-
-    // TODO: retrieve SSID from database
-    buildAckData(para) {
-        return new Promise( (resolve, reject) => {
-            super.buildAckData()
-                .then( (value) => {
-                    resolve([value, "BK3431S"].join(','));
-                })
-                .catch( (error) => {
-                })
-        });
-    }
-}
-
-var btssidTransponder = new BTSSIDTransponder('BTSSID');  /* ACK^BTSSID,BK3431S */
-
-var transponderMap = new Map();
-transponderMap.set('LOCA', locaTransponder);
-transponderMap.set('SYNC', syncTransponder);
-transponderMap.set('SUDO', sudoTransponder);
-transponderMap.set('LOCK', lockTransponder);
-transponderMap.set('BTSSID', btssidTransponder);
-
-
-module.exports.lockAckMap = transponderMap;
-
 
