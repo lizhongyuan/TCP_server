@@ -1,6 +1,6 @@
-"use strict"
+"use strict";
 
-let Koa = require('koa');
+const Koa = require('koa');
 let app = new Koa();
 let bodyParser = require('koa-bodyparser');
 let config = require('config');
