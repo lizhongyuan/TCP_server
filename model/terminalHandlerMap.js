@@ -5,6 +5,4 @@
 
 "use strict";
 
-let _activeLocks = new Map();
-
-module.exports = _activeLocks;
+module.exports = new Map();

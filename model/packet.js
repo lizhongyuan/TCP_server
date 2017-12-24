@@ -14,9 +14,14 @@ Promise.config({
 class Packet {
 
     constructor (deviceID, msgID, data) {
-        this._deviceID = deviceID;
-        this._msgID = msgID;
-        this._data = data;
+        this._deviceID = deviceID;          // 设备ID
+        this._msgID = msgID;                // 消息ID
+        this._data = data;                  // 实际有用的数据
+        if (/^RET,.+/.test(this._data)) {
+            this._msgType = 'ret';
+        } else {
+            this._msgType = 'positive';
+        }
         // todo: you can design your own dispatcher
         this._dispatcher = /^(\w+)(?::([a-zA-Z0-9,+]+))?/
         let dataRe = this._dispatcher.exec(this._data);
@@ -38,11 +43,11 @@ class Packet {
         if (re == null) {
             return undefined;
         }
-        let proID = re[1];
-        let deviceID = re[2];
-        let msgID = parseInt(re[3],16);
-        let dataLen = parseInt(re[4], 16);
-        let data = re[5];
+        let proID = re[1];                  // project ID
+        let deviceID = re[2];               // device ID
+        let msgID = parseInt(re[3],16);     // message ID
+        let dataLen = parseInt(re[4], 16);  // data length
+        let data = re[5];                   // data
         if (proID != Packet.proID()) {
             return undefined;
         }
@@ -53,4 +58,6 @@ class Packet {
         return new Packet(deviceID, msgID, data);
     }
 }
+
+module.exports = Packet;
 

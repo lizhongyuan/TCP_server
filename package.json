@@ -8,6 +8,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "config": "^1.28.1",
+    "ioredis": "^3.2.2",
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.3.0",

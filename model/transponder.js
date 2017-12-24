@@ -7,7 +7,7 @@
 "use strict";
 
 /*
- * base class
+ *
  */
 class Transponder {
     constructor(msgType) {
@@ -16,7 +16,7 @@ class Transponder {
 
     /*
      * generate the ack message to acknowlege the terminal.
-     * this may have a time cost, like get GPS data
+     * this may have a time cost, for example getting GPS data
      * return a Promise
      */
     genAckMsgAsync(msgType, para) {

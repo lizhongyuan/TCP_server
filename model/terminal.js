@@ -11,7 +11,7 @@ Promise.config({
     cancellation:true
 })
 
-let onlineTerminalMap = require('./lockHandlerMap');
+let onlineTerminalMap = require('./terminalHandlerMap');
 /** @type {function(string, *)} */
 let TerMapSet = onlineTerminalMap.set;
 // let onlineTerminalMap = new Map();
@@ -37,10 +37,10 @@ class Terminal {
     /*
      *
      */
-    onTermialRetData(taskID, data) {
+    onTermialRetData(msgID, data) {
         //let [cmd, isSuccess] = Terminal.parseRetData(data)    // TZ use this
         let parseRet = Terminal.parseRetData(data)
-        this.upStreamEmitter.emit(taskID, parseRet)
+        this.upStreamEmitter.emit(msgID, parseRet)
     }
 
     /*
@@ -48,20 +48,20 @@ class Terminal {
      * wait on upStream, and emit downStream
      */
     waitOnUpStreamAndEmitDownStream(body, timeout = 30) {
-        let taskID = genTaskID();
-        let packet = new Packet(this.deviceID, taskID, body);
+        let msgID = genTaskID();
+        let packet = new Packet(this.deviceID, msgID, body);
 
         return new Promise((resolve, reject) => {
-            let promiseChain = Promise().resolve()
+            let promiseChain = Promise.resolve()
                 .then(() => {
                     let timer = setTimeout(() => {
-                        this.upStreamEmitter.removeListener(taskID, parseRet => {});
+                        this.upStreamEmitter.removeListener(msgID, parseRet => {});
                         reject({errorCode:1, msg:"time out"});
                         return promiseChain.cancel();
                     }, timeout * 1000);
 
 
-                    this.upStreamEmitter.once(taskID, parseRet => {
+                    this.upStreamEmitter.once(msgID, parseRet => {
                         clearTimeout(timer);
 
                         // todo , for the general situation, set a class for parseRet
@@ -75,6 +75,22 @@ class Terminal {
                     downStreamEmitter.emit(this.deviceID, packet);
                 })
         })
+    }
+
+    /*
+     * 处理ret类型的数据
+     */
+    emitTerminalData2UpStreamEmitter(msgID, data) {
+        let parser, re;
+        if(data.split(",").length === 3) {
+            parser = /^RET,(\w+),(\w+)$/;
+            re = parser.exec(data);
+        } else {
+            parser = /^RET,(\w+),(\w+),(\w+)$/;
+            re = parser.exec(data);
+        }
+        let [, action, result] = re;
+        this.upStreamEmitter.emit(msgID, action, result);
     }
 
 
@@ -137,7 +153,7 @@ class Terminal {
         }
     }
 
-    static getLockHandler(deviceID) {
+    static getOnlineTerminalHandler(deviceID) {
         return onlineTerminalMap.get(deviceID);
     }
 
@@ -169,5 +185,5 @@ class Terminal {
     */
 }
 
-
+module.exports = Terminal;
 
