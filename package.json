@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "fenixlee@163.com",
   "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pm2": "pm2 start index.js --name tcp-server -i 2 --node-args='--max-old-space-size=4096' --max-memory-restart=4096M"
+  },
   "dependencies": {
     "bluebird": "^3.5.1",
     "config": "^1.28.1",
@@ -12,6 +16,7 @@
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.3.0",
+    "log4js": "^1.1.0",
     "sprintf-js": "^1.1.1"
   }
 }

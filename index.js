@@ -23,7 +23,7 @@ app.listen(3000);
 
 setTimeout(() => {
     let tcpServer = TcpServer(redis, db, 10);
-    tcpServer.listen(9603);
+    tcpServer.listen(2500);
 
     console.log("Server start.");
 }, 3000);

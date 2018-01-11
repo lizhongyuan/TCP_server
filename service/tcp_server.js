@@ -12,6 +12,8 @@ let Terminal = require("../model/terminal");
 let messageEmitter = require('../model/messageEmitter');
 let net = require("net");
 let os = require("../util/os")
+let log4js = require("../util/logger");
+let logger = log4js.getLogger('tcp-server');
 
 let downStreamEmitter = messageEmitter.downStreamEmitter;
 
@@ -26,6 +28,8 @@ function TcpServer(redisInstances, db, timeout) {
 
         // 服务器收到数据data时的
         socket.on("data", rawData => {
+						console.log(rawData.toString());
+						logger.info(rawData.toString());
 
             // 1. parse the terminal raw data
             let curPacket = Packet.genPacketByRawMsg(rawData);
