@@ -1,0 +1,11 @@
+{
+  "name":"test1",
+  "version":"0.0.1",
+  "description":"my test1",
+  "main":"./pm2Test1.js",
+  "scripts": {
+    "pm2": "pm2 start pm2Test1.js --name pm2Test1"
+  },
+  "dependencies":{
+  }
+}
