@@ -4,6 +4,8 @@
 
 'use strict';
 
+
+const Packet = require('./packet');
 const EventEmitter = require('events');
 const downStreamEmitter = require('./messageEmitter').downStreamEmitter;
 const Promise = require("bluebird");
@@ -11,7 +13,7 @@ Promise.config({
     cancellation:true
 })
 
-let onlineTerminalMap = require('./terminalHandlerMap');
+let onlineTerminalMap = require('./../service/terminalHandlerMap');
 /** @type {function(string, *)} */
 let TerMapSet = onlineTerminalMap.set;
 // let onlineTerminalMap = new Map();
