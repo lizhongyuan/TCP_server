@@ -10,6 +10,9 @@ let service = require('./service');
 let TcpServer = service.TcpServer;
 let svrRedis = service.svrRedis;
 
+let log4js = require("./util/logger");
+let logger = log4js.getLogger('tcp-server');
+
 
 // todo
 let db = null;
@@ -25,6 +28,6 @@ setTimeout(() => {
     let tcpServer = TcpServer(redis, db, 10);
     tcpServer.listen(2500);
 
-    console.log("Server start.");
+    logger.info("Server start.");
 }, 3000);
 
